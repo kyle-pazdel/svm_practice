@@ -25,20 +25,20 @@ def compute_cost(W, X, Y):
 
 
 def calculate_cost_gradient(W, X_batch, Y_batch):
+    # if only one example is passed (eg. in case of SGD)
     if type(Y_batch) == np.float64:
         Y_batch = np.array([Y_batch])
         X_batch = np.array([X_batch])
-
     distance = 1 - (Y_batch * np.dot(X_batch, W))
     dw = np.zeros(len(W))
-
     for ind, d in enumerate(distance):
         if max(0, d) == 0:
             di = W
         else:
             di = W - (reg_strength * Y_batch[ind] * X_batch[ind])
         dw += di
-    dw = dw/len(Y_batch)
+    dw = dw/len(Y_batch)  # average
+    return dw
 
 
 def sgd(features, outputs):
@@ -64,10 +64,13 @@ def sgd(features, outputs):
 
 
 def init():
-    data = pd.read_csv('.data.csv')
-    diagnosis_map = {'M': 1, 'B': -1}
-    data['diagnosis'] = data['diagnosis'].map(diagnosis_map)
+    print("reading dataset...")
+    data = pd.read_csv('./data.csv')
     data.drop(data.columns[[-1, 0]], axis=1, inplace=True)
+
+    print("applying feature engineering...")
+    diagnosis_map = {'M': 1.0, 'B': -1.0}
+    data['diagnosis'] = data['diagnosis'].map(diagnosis_map)
 
     Y = data.loc[:, 'diagnosis']
     X = data.iloc[:, 1:]
@@ -76,6 +79,7 @@ def init():
     X = pd.DataFrame(X_normalized)
 
     X.insert(loc=len(X.columns), column='intercept', value=1)
+
     print("splitting dataset into train and test sets...")
     X_train, X_test, y_train, y_test = tts(
         X, Y, test_size=0.2, random_state=42)
