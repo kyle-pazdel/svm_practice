@@ -22,10 +22,33 @@ def compute_cost(W, X, Y):
     cost = 1/2 * np.dot(W, W) + hinge_loss
     return cost
 
-# def calculate_cost_gradient(W, X_batch, Y_batch):
-#     if type(Y_batch) ==
 
-    # def sgd(features, outputs):
+def calculate_cost_gradient(W, X_batch, Y_batch):
+    if type(Y_batch) == np.float64:
+        Y_batch = np.array([Y_batch])
+        X_batch = np.array([X_batch])
+
+    distance = 1 - (Y_batch * np.dot(X_batch, W))
+    dw = np.zeros(len(W))
+
+    for ind, d in enumerate(distance):
+        if max(0, d) == 0:
+            di = W
+        else:
+            di = W - (reg_strength * Y_batch[ind] * X_batch[ind])
+        dw += di
+    dw = dw/len(Y_batch)
+
+
+def sgd(features, outputs):
+    max_epochs = 5000
+    weights = np.zeros(features.shape[1])
+    for epoch in range(1, max_epochs):
+        X, Y = shuffle(features, outputs)
+        for ind, x in enumerate(X):
+            ascent = calculate_cost_gradient(weights, x, Y[ind])
+            weights = weights - (learning_rate * ascent)
+    return weights
 
 
 def init():
@@ -44,3 +67,8 @@ def init():
     print("splitting dataset into train and test sets...")
     X_train, X_test, y_train, y_test = tts(
         X, Y, test_size=0.2, random_state=42)
+
+    print("training started...")
+    W = sgd(X_train.to_numpy(), y_train.to_numpy())
+    print("training finished.")
+    print("weights are: {}".format(W))
