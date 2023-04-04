@@ -13,9 +13,19 @@ from sklearn.utils import shuffle
 # def remove_less_significant_features(X, Y):
 
 
-# def compute_cost(W, X, Y):
+def compute_cost(W, X, Y):
+    N = X.shape[0]
+    distances = 1 - Y * (np.dot(X, W))
+    distances[distances < 0] = 0
+    hinge_loss = reg_strength * (np.sum(distances) / N)
+
+    cost = 1/2 * np.dot(W, W) + hinge_loss
+    return cost
+
 # def calculate_cost_gradient(W, X_batch, Y_batch):
-# def sgd(features, outputs):
+#     if type(Y_batch) ==
+
+    # def sgd(features, outputs):
 
 
 def init():
