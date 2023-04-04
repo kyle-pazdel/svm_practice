@@ -31,3 +31,6 @@ def init():
     X = pd.DataFrame(X_normalized)
 
     X.insert(loc=len(X.columns), column='intercept', value=1)
+    print("splitting dataset into train and test sets...")
+    X_train, X_test, y_train, y_test = tts(
+        X, Y, test_size=0.2, random_state=42)
