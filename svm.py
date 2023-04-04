@@ -43,11 +43,22 @@ def calculate_cost_gradient(W, X_batch, Y_batch):
 def sgd(features, outputs):
     max_epochs = 5000
     weights = np.zeros(features.shape[1])
+    nth = 0
+    prev_cost = float("inf")
+    cost_threshold = 0.01
     for epoch in range(1, max_epochs):
         X, Y = shuffle(features, outputs)
         for ind, x in enumerate(X):
             ascent = calculate_cost_gradient(weights, x, Y[ind])
             weights = weights - (learning_rate * ascent)
+
+        if epoch == 2 ** nth or epoch == max_epochs - 1:
+            cost = compute_cost(weights, features, outputs)
+            print("Epoch is: {} and Cost is: {}".format(epoch, cost))
+            if abs(prev_cost - cost) < cost_threshold * prev_cost:
+                return weights
+            prev_cost = cost
+            nth += 1
     return weights
 
 
