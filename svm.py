@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split as tts
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
 from sklearn.utils import shuffle
 
 
@@ -83,3 +84,20 @@ def init():
     W = sgd(X_train.to_numpy(), y_train.to_numpy())
     print("training finished.")
     print("weights are: {}".format(W))
+
+    y_test_predicted = np.array([])
+    for i in range(X_test.shape[0]):
+        yp = np.sign(np.dot(W, X_test.to_numpy()[i]))
+        y_test_predicted = np.append(y_test_predicted, yp)
+
+    print("accuracy on test dataset: {}".format(
+        accuracy_score(y_test.to_numpy(), y_test_predicted)))
+    print("recall on test dataset: {}".format(
+        recall_score(y_test.to_numpy(), y_test_predicted)))
+    print("precision on test dataset: {}".format(
+        recall_score(y_test.to_numpy(), y_test_predicted)))
+
+
+reg_strength = 10000
+learning_rate = 0.000001
+init()
